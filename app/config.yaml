@@ -1,0 +1,15 @@
+credentials:
+  usernames:
+    oemsolar:
+      email: teste@oemsolar.com
+      name: O&M
+      password: '$2b$12$LcKFV8GHGOaS.8jWocUB2uKM2gZOrPeYG7LcuxLIeAl.9.hmwLssu'
+
+cookie:
+  name: nome_cookie
+  key: chave_secreta_cookie
+  expiry_days: 7
+
+api_urls:
+  santo_antonio: "https://oemsolarfsp.loca.lt"
+  segredo: "https://oemsolarfsg.loca.lt"

@@ -1,0 +1,1 @@
+from .inverter_dashboard import InverterDashboard
