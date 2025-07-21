@@ -1,4 +1,3 @@
-import toml
 import streamlit as st
 import streamlit_authenticator as stauth
 from api.background_updater import start_background_updater
@@ -6,8 +5,8 @@ from api.services import ApiClient, TrackerService, AlarmService, InverterServic
 
 
 st.set_page_config(layout="wide")
-with open("config.toml") as file:
-    config = toml.load(file)
+
+config = st.secrets
 
 authenticator = stauth.Authenticate(
     config["credentials"],
