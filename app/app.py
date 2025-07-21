@@ -3,20 +3,30 @@ import streamlit_authenticator as stauth
 from api.background_updater import start_background_updater
 from api.services import ApiClient, TrackerService, AlarmService, InverterService
 
-
 st.set_page_config(layout="wide")
 
-config = st.secrets
+config = {
+    "credentials": dict(st.secrets.get("credentials", {})),
+    "cookie": dict(st.secrets.get("cookie", {})),
+    "api_urls": dict(st.secrets.get("api_urls", {}))
+}
+
+# Converter usernames nested dict
+if "credentials" in config and "usernames" in config["credentials"]:
+    config["credentials"]["usernames"] = {
+        username: dict(user_data)
+        for username, user_data in config["credentials"]["usernames"].items()
+    }
 
 authenticator = stauth.Authenticate(
-    config["credentials"],
-    config["cookie"]["name"],
-    config["cookie"]["key"],
-    config["cookie"]["expiry_days"],
+    config.get("credentials", {}),
+    config.get("cookie", {}).get("name", ""),
+    config.get("cookie", {}).get("key", ""),
+    config.get("cookie", {}).get("expiry_days", 30),
 )
 
-segredo_endpoint = config["api_urls"]["segredo"]
-santo_antonio_endpoint = config["api_urls"]["santo_antonio"]
+segredo_endpoint = config.get("api_urls", {}).get("segredo", "")
+santo_antonio_endpoint = config.get("api_urls", {}).get("santo_antonio", "")
 
 try:
     authenticator.login()
