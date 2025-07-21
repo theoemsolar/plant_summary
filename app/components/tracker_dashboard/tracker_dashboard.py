@@ -20,9 +20,11 @@ class TrackerDashboard:
                 prev += NUMBER_OF_TRACKERS_PER_COLUMN
 
     def _generate_column(self, NUMBER_OF_TRACKERS_PER_COLUMN, prev):
-        for tracker in st.session_state.get(st.session_state["plant"])[
-            "trackers_angles"
-        ]["data"][prev : prev + NUMBER_OF_TRACKERS_PER_COLUMN]:
+        for tracker in (
+            st.session_state.get(st.session_state["plant"], {})
+            .get("trackers_angles", {})
+            .get("data", [])[prev : prev + NUMBER_OF_TRACKERS_PER_COLUMN]
+        ):
             tracker_number = tracker["tracker"].replace("TCU", "")
             TrackerCard().render(
                 tracker_number,

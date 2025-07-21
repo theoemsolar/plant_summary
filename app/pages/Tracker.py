@@ -41,17 +41,21 @@ class TrackerApp:
         st_autorefresh(interval=PAGE_REFRESH_MS, key="tracker_autorefresh")
 
     def run(self):
-        side_bar()
         if not st.session_state.get("authentication_status"):
             return
-
-
+        side_bar()
         if (
-                st.session_state.get(st.session_state.get('plant', {})).get(TRACKERS_ALARMS_KEY, {}).get('data', None) is None
-                or st.session_state.get(st.session_state.get('plant', {})).get(TRACKERS_KEY, {}).get("data", None) is None
+            st.session_state.get(st.session_state.get("plant"))
+            .get(TRACKERS_ALARMS_KEY, {})
+            .get("data", None)
+            is None
+            or st.session_state.get(st.session_state.get("plant"))
+            .get(TRACKERS_KEY, {})
+            .get("data", None)
+            is None
         ):
             st.warning(
-                "Sem valores para o tracker. Por favor, aguarde a coleta dos dados."
+                f"Sem valores para tracker em {st.session_state.get('plant')}. Por favor, aguarde a coleta dos dados."
             )
             return
         self._render_page()
