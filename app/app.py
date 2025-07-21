@@ -1,14 +1,13 @@
-import yaml
+import toml
 import streamlit as st
-from yaml.loader import SafeLoader
 import streamlit_authenticator as stauth
 from api.background_updater import start_background_updater
 from api.services import ApiClient, TrackerService, AlarmService, InverterService
 
 
 st.set_page_config(layout="wide")
-with open("app/config.yaml") as file:
-    config = yaml.load(file, Loader=SafeLoader)
+with open("config.toml") as file:
+    config = toml.load(file)
 
 authenticator = stauth.Authenticate(
     config["credentials"],
