@@ -1,4 +1,3 @@
-import pandas as pd
 import streamlit as st
 from utils import FilterDataFrame
 from components.inverter.inverter_dashboard.inverter_dashboard import InverterDahsboard
@@ -33,5 +32,4 @@ class InverterPage:
 
 
 if __name__ == "__main__":
-
     InverterPage().render()

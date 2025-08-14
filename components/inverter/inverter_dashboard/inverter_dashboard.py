@@ -15,14 +15,19 @@ class InverterDahsboard:
     def grid(self):
         columns = st.columns(self.NUMBER_OF_COLUMNS)
         for index, row in self.last_data.iterrows():
+            alarm = (
+                row["alarm"].split()[-1] if len(row["alarm"].split()) > 0 else "FETCH"
+            )
             with columns[index % self.NUMBER_OF_COLUMNS]:
                 InverterCard().render(
                     row["inverter"],
                     row["generation"],
                     row["generation_timestamp"],
-                    row["alarm"].split()[-1],
+                    alarm,
                     False,
                 )
+
+    # def check_alarm(self):
 
     def prepare_dataframe(self):
         self.last_data.sort_values(by="inverter", inplace=True)

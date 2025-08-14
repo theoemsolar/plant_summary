@@ -13,16 +13,28 @@ class InverterHistoricalData:
         self.sheet_service = SheetService()
         self.df: pd.DataFrame = None
 
+    @st.cache_data
+    def _get_cached_historical_data(_self, client: str, month: str) -> pd.DataFrame:
+        return _self.sheet_service.get_historical_data_by_client("Copel", month)
+
     def render(self, applied_filters):
         month = self.header(applied_filters)
         self.prepare_df(applied_filters, month)
-        self.alarm_history()
+        try:
+            self.alarm_history()
+        except Exception as e:
+            st.warning("Não foi possível gerar o gráfico de histórico de alarmes.")
         col1, col2 = st.columns(2)
         with col1:
-            self.generation_line()
-
+            try:
+                self.generation_line()
+            except Exception as e:
+                st.warning("Não foi possível gerar o gráfico de geração diária.")
         with col2:
-            self.generation_by_day()
+            try:
+                self.generation_by_day()
+            except Exception as e:
+                st.warning("Não foi possível gerar o gráfico de geração por inversor.")
 
         DailyGeneration().plot(self.df)
 
@@ -34,12 +46,10 @@ class InverterHistoricalData:
     def prepare_df(self, applied_filters, month):
         client, plant = applied_filters
         try:
-            # self.df = self.sheet_service.get_historical_data_by_client(client, month)
-            # self.df.to_csv("sample.csv")
-            self.df = pd.read_csv("sample.csv")
+            self.df = self._get_cached_historical_data(client, month)
         except Exception as e:
             st.warning(f"Sem dados para o {month} em {client} - {plant}.")
-            return
+            st.stop()
         self.df = self.df[self.df.plant_name == plant]
 
     def generation_by_day(self):

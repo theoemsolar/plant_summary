@@ -53,12 +53,35 @@ def plant_summary_card(plant_name, inverters_alarms, trackers_alarms, total_gene
             if count > 0 and tracker_type in tracker_emojis:
                 tracker_indicators += f'<span style="margin-right: 4px; font-size: 14px;">{tracker_emojis[tracker_type]}</span>'
 
+    # Sempre piscar vermelho se houver qualquer alarme
+    card_alarm_color = None
+    if total_inv_alarms > 0 or total_track_alarms > 0:
+        card_alarm_color = "#B91C1C"  # vermelho
+
+    # CSS para animação do card
+    if card_alarm_color:
+        st.markdown(
+            f"""
+            <style>
+            @keyframes pulsar-card-alarm {{
+                0% {{ box-shadow: 0 0 0 0 {card_alarm_color}55; border-color: {card_alarm_color}; }}
+                100% {{ box-shadow: 0 0 24px 8px {card_alarm_color}cc; border-color: {card_alarm_color}; }}
+            }}
+            .pulsar-card-alarm {{
+                animation: pulsar-card-alarm 1.2s infinite alternate;
+                border-color: {card_alarm_color} !important;
+            }}
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+
     with st.container():
         st.markdown(
             f"""
-        <div style='
+        <div class='{'pulsar-card-alarm' if card_alarm_color else ''}' style='
             background-color: #2d3748;
-            border: 2px solid #4a5568;
+            border: 2px solid {card_alarm_color if card_alarm_color else '#4a5568'};
             border-radius: 8px;
             padding: 10px;
             margin: 5px 0;
@@ -122,14 +145,38 @@ def get_total_generation(df):
 
 
 def home_dashboard():
-    columns = st.columns(TOTAL_OF_COLUMNS)
-    for index, plant in enumerate(df.plant_name.unique()):
-        with columns[index % TOTAL_OF_COLUMNS]:
+    # Adiciona filtro na sidebar
+    filtro_cards = st.sidebar.radio(
+        "Exibir cards:", ("Todos", "Apenas com alarme"), index=0
+    )
+    # Filtra as plantas conforme o filtro selecionado
+    plantas_para_exibir = []
+    for plant in df.plant_name.unique():
+        df_filtered_by_client = df[df.plant_name == plant]
+        inv_alarms = get_total_inverter_alarms(df_filtered_by_client)
+        track_alarms = get_total_trackers_alarms(df_filtered_by_client)
+        has_any_alarm = (sum(inv_alarms.values()) > 0) or (
+            sum(track_alarms.values()) > 0
+        )
+        if filtro_cards == "Apenas com alarme" and not has_any_alarm:
+            continue
+        plantas_para_exibir.append(
+            (
+                plant,
+                inv_alarms,
+                track_alarms,
+                get_total_generation(df_filtered_by_client),
+            )
+        )
 
-            df_filtered_by_client = df[df.plant_name == plant]
+    columns = st.columns(TOTAL_OF_COLUMNS)
+    for idx, (plant, inv_alarms, track_alarms, total_gen) in enumerate(
+        plantas_para_exibir
+    ):
+        with columns[idx % TOTAL_OF_COLUMNS]:
             plant_summary_card(
                 plant,
-                get_total_inverter_alarms(df_filtered_by_client),
-                get_total_trackers_alarms(df_filtered_by_client),
-                get_total_generation(df_filtered_by_client),
+                inv_alarms,
+                track_alarms,
+                total_gen,
             )
