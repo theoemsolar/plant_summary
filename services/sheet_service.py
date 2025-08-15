@@ -5,7 +5,7 @@ SPREAD_SHEET_IDS = {
     "Copel": "1_KoK1ll3t0b8fDd5V75-KMrRg5tiSTG8cqd6Ebn_Mss",
     # "GY": "1fxlC5x9BwmZJ1JkMoyRRgrENdMdUxu-5D4bTdxF8C8E",
 }
-
+pd.set_option("future.no_silent_downcasting", True)
 MONTHS = [
     "Janeiro",
     "Fevereiro",

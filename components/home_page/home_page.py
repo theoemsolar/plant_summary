@@ -2,7 +2,6 @@ import streamlit as st
 from utils.filter_df.filter_dataframe import FilterDataFrame
 
 TOTAL_OF_COLUMNS = 6
-df = st.session_state.get("day_data", {})
 
 
 def plant_summary_card(plant_name, inverters_alarms, trackers_alarms, total_generation):
@@ -145,6 +144,7 @@ def get_total_generation(df):
 
 
 def home_dashboard():
+    df = st.session_state.get("day_data", {})
     # Adiciona filtro na sidebar
     filtro_cards = st.sidebar.radio(
         "Exibir cards:", ("Todos", "Apenas com alarme"), index=0

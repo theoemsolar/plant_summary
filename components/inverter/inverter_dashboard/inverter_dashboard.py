@@ -1,6 +1,5 @@
 import pandas as pd
 import streamlit as st
-from utils import FilterDataFrame
 from components.inverter.inverter_card import InverterCard
 
 
@@ -26,8 +25,6 @@ class InverterDahsboard:
                     alarm,
                     False,
                 )
-
-    # def check_alarm(self):
 
     def prepare_dataframe(self):
         self.last_data.sort_values(by="inverter", inplace=True)
